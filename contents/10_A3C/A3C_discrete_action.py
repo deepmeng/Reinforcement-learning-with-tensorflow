@@ -60,7 +60,7 @@ class ACNet(object):
 
                 with tf.name_scope('a_loss'):
                     log_prob = tf.reduce_sum(tf.log(self.a_prob) * tf.one_hot(self.a_his, N_A, dtype=tf.float32), axis=1, keep_dims=True)
-                    exp_v = log_prob * td
+                    exp_v = log_prob * tf.stop_gradient(td)
                     entropy = -tf.reduce_sum(self.a_prob * tf.log(self.a_prob + 1e-5),
                                              axis=1, keep_dims=True)  # encourage exploration
                     self.exp_v = ENTROPY_BETA * entropy + exp_v
@@ -117,8 +117,8 @@ class Worker(object):
             s = self.env.reset()
             ep_r = 0
             while True:
-                if self.name == 'W_0':
-                    self.env.render()
+                # if self.name == 'W_0':
+                #     self.env.render()
                 a = self.AC.choose_action(s)
                 s_, r, done, info = self.env.step(a)
                 if done: r = -5
