@@ -6,8 +6,8 @@ The Cartpole example.
 View more on my tutorial page: https://morvanzhou.github.io/tutorials/
 
 Using:
-tensorflow 1.0
-gym 0.8.0
+tensorflow 1.8.0
+gym 0.10.5
 """
 
 import multiprocessing
@@ -59,7 +59,7 @@ class ACNet(object):
                     self.c_loss = tf.reduce_mean(tf.square(td))
 
                 with tf.name_scope('a_loss'):
-                    log_prob = tf.reduce_sum(tf.log(self.a_prob) * tf.one_hot(self.a_his, N_A, dtype=tf.float32), axis=1, keep_dims=True)
+                    log_prob = tf.reduce_sum(tf.log(self.a_prob + 1e-5) * tf.one_hot(self.a_his, N_A, dtype=tf.float32), axis=1, keep_dims=True)
                     exp_v = log_prob * tf.stop_gradient(td)
                     entropy = -tf.reduce_sum(self.a_prob * tf.log(self.a_prob + 1e-5),
                                              axis=1, keep_dims=True)  # encourage exploration
